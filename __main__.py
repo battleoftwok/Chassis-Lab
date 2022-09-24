@@ -46,8 +46,8 @@ def add_new_variant(var_num: int):
             'Pст.взл, [Н]': int(input(f'Pст.взл, [Н]: ')),
             'Aэ, [Дж]': int(input(f'Aэ, [Дж]: ')),
             'G0/Gпос, [-]': float(input(f'G0/Gпос, [-]: ')),
-            'Vпос, [км / ч]': int(input(f'Vпос, [км / ч]: ')),
-            'Vвзл, [км / ч]': int(input(f'Vвзл, [км / ч]: ')),
+            'Vпос, [км/ч]': int(input(f'Vпос, [км/ч]: ')),
+            'Vвзл, [км/ч]': int(input(f'Vвзл, [км/ч]: ')),
             'p0 * 10 ^ 5, [Па]': float(input(f'p0 * 10 ^ 5, [Па]: ')),
             'Индекс шасси': str(input(f'Индекс шасси: ')),
         })
@@ -65,4 +65,11 @@ def run(variant_number: int):
 
 if __name__ == '__main__':
 
-    run(3)
+    # run(3)
+
+    # t = tuple(int(item) for item in s.split(','))
+
+    with open('pneumatics.yml', "r", encoding=ENCODING) as file_data:
+        data = yaml.load(file_data, Loader=yaml.FullLoader)
+
+    print(data)
