@@ -3,6 +3,15 @@ import yaml
 import sys
 
 
+ENCODING = 'utf-8'
+
+
+with open('variants_data.yml', "r", encoding=ENCODING) as file_data:
+    variants_data = yaml.load(file_data, Loader=yaml.FullLoader)
+
+    log.info('Input data successfully initialized.')
+
+
 def query_yes_no(question, default="yes"):
 
     valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
@@ -26,16 +35,10 @@ def query_yes_no(question, default="yes"):
             sys.stdout.write("Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n")
 
 
-with open('variants_data.yml', "r", encoding='windows-1251') as file_data:
-    variants_data = yaml.load(file_data, Loader=yaml.FullLoader)
-
-    log.info('Input data successfully initialized.')
-
-
 def upload_new_data(new_data: dict):
     variants_data['data'].append(new_data)
 
-    with open('variants_data.yml', "w") as file:
+    with open('variants_data.yml', "w", encoding=ENCODING) as file:
         yaml.dump(variants_data, file, allow_unicode=True, sort_keys=False)
 
         log.info('New data uploaded successfully!')
@@ -79,4 +82,4 @@ def run(variant_number: int):
 
 if __name__ == '__main__':
 
-    run(1)
+    run(2)
