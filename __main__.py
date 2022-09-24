@@ -1,6 +1,5 @@
 from __log__ import log
 import yaml
-import sys
 
 
 ENCODING = 'utf-8'
@@ -12,27 +11,11 @@ with open('variants_data.yml', "r", encoding=ENCODING) as file_data:
     log.info('Input data successfully initialized.')
 
 
-def query_yes_no(question, default="yes"):
-
-    valid = {"yes": True, "y": True, "ye": True, "no": False, "n": False}
-    if default is None:
-        prompt = " [y/n] "
-    elif default == "yes":
-        prompt = " [Y/n] "
-    elif default == "no":
-        prompt = " [y/N] "
-    else:
-        raise ValueError("invalid default answer: '%s'" % default)
-
-    while True:
-        sys.stdout.write(question + prompt)
-        choice = input().lower()
-        if default is not None and choice == "":
-            return valid[default]
-        elif choice in valid:
-            return valid[choice]
-        else:
-            sys.stdout.write("Please respond with 'yes' or 'no' " "(or 'y' or 'n').\n")
+def confirm_prompt(question: str) -> bool:
+    answer = None
+    while answer not in ("", "y", "ye", "yes", "n", "no"):
+        answer = input(f"{question} [Y/n]: ").lower()
+    return answer in ("", "y", "ye", "yes")
 
 
 def upload_new_data(new_data: dict):
@@ -54,7 +37,7 @@ def get_unique_variant(var_num: int):
 
 def add_new_variant(var_num: int):
 
-    answer = query_yes_no('\nWould you like to add data for this variant?')
+    answer = confirm_prompt('\nWould you like to add data for this variant?')
 
     if answer:
         upload_new_data({
@@ -82,4 +65,4 @@ def run(variant_number: int):
 
 if __name__ == '__main__':
 
-    run(2)
+    run(3)
