@@ -7,6 +7,10 @@ ENCODING = 'utf-8'
 UNIT = 10
 
 
+def cm_to_inch(value):
+    return value/2.54
+
+
 def get_parameter(value: float, coords_x: tuple, coords_y: tuple) -> float:
     return (coords_y[1] - coords_y[0]) * ((value - coords_x[0]) / (coords_x[1] - coords_x[0])) + coords_y[0]
 
@@ -79,7 +83,7 @@ def plot(data: dict, value: float):
             'size': 16,
             }
 
-    figure, axis = plt.subplots()
+    figure, axis = plt.subplots(figsize=(12, 8))
     figure.subplots_adjust(right=0.75)
 
     plt.title(r'Определение $A_{м.д.}$, $\delta_{м.д.}$, $P_{м.д.}$', fontdict=font)
@@ -153,7 +157,7 @@ def plot(data: dict, value: float):
     info_string = r"$A_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, work_vals), 2)}, $[даН * мм]$\n" + \
                   r"$\delta_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, crimping_vals), 2)}, $[мм]$\n" + \
                   r"$P_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, force_vals), 2)}, $[даН]$\n" + \
-                  r"$P_{м.д.}$ = " + f"{round(value, 2)}, $[кгс/см^2]$\n"
+                  r"$p_0$ = " + f"{round(value, 2)}, $[кгс/см^2]$\n"
 
     figure.text(0.45, 0.15, info_string, size=12, weight='bold')
 
@@ -164,7 +168,9 @@ def plot(data: dict, value: float):
     axis.grid(which='major', color='#444', linewidth=0.5)
     axis.grid(which='minor', color='#aaa', ls=':')
 
+    # plt.savefig(f'{get_parameter(value, pressure_vals, work_vals)}.png')
     plt.show()
+    log.info('График успешно построен')
 
 
 def run(variant_number: int, amount_wheels: int):
