@@ -18,9 +18,6 @@ log_handler.setLevel(logging.DEBUG)
 # Создание Formatter для форматирования сообщений в лог-файле
 handler_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(funcName)s: in %(lineno)d - %(message)s")
 
-
-# '[%(asctime)s]:%(levelname)s: %(message)s'
-
 # Создание Formatter для форматирования сообщений в консоли
 console_out_formatter = logging.Formatter('%(levelname)s: %(message)s')
 
