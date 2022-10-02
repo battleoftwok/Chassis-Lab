@@ -10,7 +10,7 @@ class TestChoosePneumatics(unittest.TestCase):
 
     def test_Belyaev(self):
         var_data = main.get_unique_variant(1, self.input_data)
-        assert main.pneumatics_selection(self.pneumatics_data, var_data, 2)["№"] == 17
+        assert main.pneumatics_selection(self.pneumatics_data, var_data, 2)["№"] == 21
 
     def test_Svatshov(self):
         var_data = main.get_unique_variant(18, self.input_data)

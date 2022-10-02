@@ -1,7 +1,7 @@
 import logging
 import sys
 
-CONSOLE_LOG_FLAG = logging.WARNING
+CONSOLE_LOG_FLAG = logging.ERROR
 
 
 log = logging.getLogger(__name__)
