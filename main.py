@@ -27,7 +27,7 @@ def str_into_tuple(string: str) -> tuple:
 
 
 def upload_new_var_data(new_data: dict, variants_data: dict) -> None:
-    variants_data['data'].append(new_data)
+    variants_data['variants'].append(new_data)
 
     with open('variants_data.yml', "w", encoding=ENCODING) as file:
         yaml.dump(variants_data, file, allow_unicode=True, sort_keys=False)
@@ -36,7 +36,7 @@ def upload_new_var_data(new_data: dict, variants_data: dict) -> None:
 
 
 def get_unique_variant(var_num: int, variants_data: dict) -> dict:
-    for item in variants_data['data']:
+    for item in variants_data['variants']:
         if item.get('Номер варианта') == var_num:
             return item
 
@@ -127,4 +127,4 @@ if __name__ == '__main__':
 
     pneumatics_data = read_yml_file((Path('pneumatics.yml')))
 
-    run(21, 1)
+    run(8, 4)
