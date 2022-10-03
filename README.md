@@ -14,7 +14,7 @@
    4. Запустите программу, нажав двойным кликом по файлу main.py.
 
 Способ №2:
-   1. Скачайте релиз проекта ([ссылка](https://github.com/battleoftwok/Chassis-Lab/releases))
+   1. Скачайте релиз проекта ([ссылка](https://github.com/battleoftwok/Chassis-Lab/releases/download/v1.0/v1.0.7z))
 
 #
 
