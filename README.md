@@ -15,7 +15,7 @@
    1. Установите python. Скачать его можно по этой [ссылке](https://www.python.org/downloads/);
    2. [Скачайте проект](https://github.com/battleoftwok/Chassis-Lab/archive/refs/heads/main.zip);
    3. Откройте командную строку в корне проекта и выполните `python -m pip install -r .\requirements.txt`;
-   4. Запустите программу, нажав двойным кликом по файлу main.py.
+   4. Запустите программу, нажав двойным кликом по файлу `main.py`.
 
 #
 
