@@ -34,7 +34,7 @@ def str_into_tuple(string: str) -> tuple:
 def upload_new_var_data(new_data: dict, variants_data: dict) -> None:
     variants_data['variants'].append(new_data)
 
-    with open('variants_data.yml', "w", encoding=ENCODING) as file:
+    with open('../data/variants_data.yml', "w", encoding=ENCODING) as file:
         yaml.dump(variants_data, file, allow_unicode=True, sort_keys=False)
 
         log.info('Входные данные успешно обновлены!')
@@ -49,7 +49,7 @@ def get_unique_variant(var_num: int, variants_data: dict) -> dict:
 
 
 def add_new_variant(var_num: int, variants_data: dict):
-    answer = confirm_prompt('\nWould you like to add data for this variant?')
+    answer = confirm_prompt('\nВы хотите добавить данные для этого варианта?')
 
     if answer:
         upload_new_var_data({
@@ -93,6 +93,7 @@ def plot(data: dict, value: float):
 
     force.spines.right.set_position(("axes", 1.2))
 
+    log.warning("Введённые данные возможно некорректные")
     pressure_vals = str_into_tuple(data["p0, [кгс/см^2]"])
     work_vals = str_into_tuple(data["Aм.д, [кг*м]"])
     crimping_vals = str_into_tuple(data["delta_м.д, [мм]"])
@@ -124,6 +125,9 @@ def plot(data: dict, value: float):
     force.tick_params(axis='y', colors=p3.get_color(), **tkw)
     axis.tick_params(axis='x', **tkw)
 
+    for ax in ['top', 'bottom', 'left', 'right']:
+        axis.spines[ax].set_linewidth(1.5)
+
     force.vlines(value, 0, get_parameter(value, pressure_vals, force_vals),
                  color='g',
                  linewidth=2,
@@ -154,21 +158,19 @@ def plot(data: dict, value: float):
                 linewidth=2,
                 linestyle=':')
 
-    info_string = r"$A_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, work_vals), 2)}, $[даН * мм]$\n" + \
-                  r"$\delta_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, crimping_vals), 2)}, $[мм]$\n" + \
-                  r"$P_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, force_vals), 2)}, $[даН]$\n" + \
-                  r"$p_0$ = " + f"{round(value, 2)}, $[кгс/см^2]$\n"
+    info_string = r"$A_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, work_vals), 2)} $[даН * мм]$\n" + \
+                  r"$\delta_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, crimping_vals), 2)} $[мм]$\n" + \
+                  r"$P_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, force_vals), 2)} $[даН]$\n" + \
+                  r"$p_0$ = " + f"{round(value, 2)} $[кгс/см^2]$\n"
 
     figure.text(0.45, 0.15, info_string, size=12, weight='bold')
 
     axis.legend(handles=[p1, p2, p3])
-    # axis.grid()
 
     axis.minorticks_on()
     axis.grid(which='major', color='#444', linewidth=0.5)
     axis.grid(which='minor', color='#aaa', ls=':')
 
-    # plt.savefig(f'{get_parameter(value, pressure_vals, work_vals)}.png')
     plt.show()
     log.info('График успешно построен')
 
@@ -176,12 +178,14 @@ def plot(data: dict, value: float):
 def run(variant_number: int, amount_wheels: int):
     var_data = get_unique_variant(variant_number, input_data)
 
-    # pprint(var_data)
+    log.info(var_data)
 
     if var_data is None:
         add_new_variant(variant_number, input_data)
+        new_var_data = get_unique_variant(variant_number, input_data)
+        plot(pneumatics_selection(pneumatics_data, new_var_data, amount_wheels), new_var_data["p0 * 10^5, [Па]"])
     else:
-        # pprint(pneumatics_selection(pneumatics_data, var_data, amount_wheels))
+        log.info(pneumatics_selection(pneumatics_data, var_data, amount_wheels))
 
         plot(pneumatics_selection(pneumatics_data, var_data, amount_wheels), var_data["p0 * 10^5, [Па]"])
 
@@ -189,9 +193,9 @@ def run(variant_number: int, amount_wheels: int):
 if __name__ == '__main__':
 
     # Инициализация входных данных:
-    input_data = read_yml_file(Path('variants_data.yml'))
+    input_data = read_yml_file(Path('../data/variants_data.yml'))
     log.info('Входные данные успешно инициализированы')
 
-    pneumatics_data = read_yml_file((Path('pneumatics.yml')))
+    pneumatics_data = read_yml_file((Path('../data/pneumatics.yml')))
 
-    run(8, 2)
+    run(int(input("Введите номер варианта: ")), int(input("Количество колёс у стойки шасси: ")))

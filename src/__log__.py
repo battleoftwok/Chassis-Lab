@@ -12,7 +12,7 @@ console_out = logging.StreamHandler(stream=sys.stdout)
 console_out.setLevel(CONSOLE_LOG_FLAG)
 
 # Создание обработчика для записи данных в файл
-log_handler = logging.FileHandler('logs.log', encoding='utf-8')
+log_handler = logging.FileHandler('../logs.log', encoding='utf-8')
 log_handler.setLevel(logging.DEBUG)
 
 # Создание Formatter для форматирования сообщений в лог-файле

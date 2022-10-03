@@ -5,8 +5,8 @@ import unittest
 
 class TestChoosePneumatics(unittest.TestCase):
 
-    input_data = main.read_yml_file(Path('variants_data.yml'))
-    pneumatics_data = main.read_yml_file((Path('pneumatics.yml')))
+    input_data = main.read_yml_file(Path('../data/variants_data.yml'))
+    pneumatics_data = main.read_yml_file((Path('../data/pneumatics.yml')))
 
     def test_Belyaev(self):
         var_data = main.get_unique_variant(1, self.input_data)
