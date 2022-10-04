@@ -156,6 +156,17 @@ def pneumatics_selection(pneumatics: dict, var_data: dict, amount_wheels: int):
             return item
 
 
+def lines(axis, coords_x, coords_y, options: dict):
+
+    axis.vlines(coords_x[0], 0, coords_y[0], **options)
+
+    axis.hlines(coords_y[0], 0, coords_x[0], **options)
+
+    axis.vlines(coords_x[1], 0, coords_y[1], **options)
+
+    axis.hlines(coords_y[1], 0, coords_x[1], **options)
+
+
 def plot(pneumatic_data: dict, value_p0: float):
 
     """
@@ -187,6 +198,7 @@ def plot(pneumatic_data: dict, value_p0: float):
     force.spines.right.set_position(("axes", 1.2))
 
     log.warning("Введённые данные возможно некорректные")
+
     pressure_vals = str_into_tuple(pneumatic_data["p0, [кгс/см^2]"])
     work_vals = str_into_tuple(pneumatic_data["Aм.д, [кг*м]"])
     crimping_vals = str_into_tuple(pneumatic_data["delta_м.д, [мм]"])
@@ -251,6 +263,16 @@ def plot(pneumatic_data: dict, value_p0: float):
                 linewidth=2,
                 linestyle=':')
 
+    # -------------------------------------------------------------------------------------------------------
+
+    options = {
+        "color": 'b',
+        "linewidth": 2,
+        "linestyle": (0, (5, 10))
+    }
+
+    lines(axis, pressure_vals, work_vals, options)
+
     output_data({
             'Aм.д. [даН * мм]': straight_line_equation(value_p0, pressure_vals, work_vals),
             'Delta_м.д. [мм]': straight_line_equation(value_p0, pressure_vals, crimping_vals),
@@ -308,6 +330,7 @@ def run(variant_number: int, amount_wheels: int):
             print(key, ':', value)
 
         plot(pneumatic, new_var_data["p0 * 10^5, [Па]"])
+
     else:
 
         log.info(pneumatic)
