@@ -102,7 +102,6 @@ def get_unique_variant(var_num: int, variants_data: dict) -> dict:
 
 
 def add_new_variant(var_num: int, variants_data: dict):
-
     """
 
     Добавить новые данные
@@ -132,7 +131,6 @@ def add_new_variant(var_num: int, variants_data: dict):
 
 
 def pneumatics_selection(pneumatics: dict, var_data: dict, amount_wheels: int):
-
     """
 
     Подбор пневматика
@@ -157,7 +155,6 @@ def pneumatics_selection(pneumatics: dict, var_data: dict, amount_wheels: int):
 
 
 def lines(axis, coords_x, coords_y, options: dict):
-
     axis.vlines(coords_x[0], 0, coords_y[0], **options)
     axis.hlines(coords_y[0], 0, coords_x[0], **options)
 
@@ -166,7 +163,6 @@ def lines(axis, coords_x, coords_y, options: dict):
 
 
 def plot(pneumatic_data: dict, value_p0: float):
-
     """
 
     Построение графика
@@ -202,9 +198,10 @@ def plot(pneumatic_data: dict, value_p0: float):
     crimping_vals = str_into_tuple(pneumatic_data["delta_м.д, [мм]"])
     force_vals = str_into_tuple(pneumatic_data["Pм.д, [кгс]"])
 
-    p1, = axis.plot(pressure_vals, work_vals, "b-", label="Максимально допустимая работа", linewidth=2)
-    p2, = crimping.plot(pressure_vals, crimping_vals, "r-", label="Максимально допустимое обжатие", linewidth=2)
-    p3, = force.plot(pressure_vals, force_vals, "g-", label="Максимально допустимая сила", linewidth=2)
+    p1, = axis.plot(pressure_vals, work_vals, "b", label="Максимально допустимая работа", linewidth=3, linestyle='-')
+    p2, = crimping.plot(pressure_vals, crimping_vals, "r", label="Максимально допустимое обжатие", linewidth=3,
+                        linestyle='-.')
+    p3, = force.plot(pressure_vals, force_vals, "g", label="Максимально допустимая сила", linewidth=3, linestyle='--')
 
     FITTING = 1.2
 
@@ -276,9 +273,9 @@ def plot(pneumatic_data: dict, value_p0: float):
                                              "linestyle": (0, (5, 10))})
 
     output_data({
-            'Aм.д. [даН * мм]': straight_line_equation(value_p0, pressure_vals, work_vals),
-            'Delta_м.д. [мм]': straight_line_equation(value_p0, pressure_vals, crimping_vals),
-            'Pм.д. [даН]': straight_line_equation(value_p0, pressure_vals, force_vals)})
+        'Aм.д. [даН * мм]': straight_line_equation(value_p0, pressure_vals, work_vals),
+        'Delta_м.д. [мм]': straight_line_equation(value_p0, pressure_vals, crimping_vals),
+        'Pм.д. [даН]': straight_line_equation(value_p0, pressure_vals, force_vals)})
 
     info_string = r"$A_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, work_vals), 2)} $[даН * мм]$\n" + \
                   r"$\delta_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, crimping_vals), 2)} $[мм]$\n" + \
@@ -287,7 +284,7 @@ def plot(pneumatic_data: dict, value_p0: float):
 
     figure.text(0.45, 0.15, info_string, size=12, weight='bold')
 
-    axis.legend(handles=[p1, p2, p3])
+    axis.legend(handles=[p1, p2, p3], loc='upper center', fontsize='x-large')
 
     axis.minorticks_on()
     axis.grid(which='major', color='#444', linewidth=0.5)
@@ -303,7 +300,6 @@ def output_data(data):
 
 
 def run(variant_number: int, amount_wheels: int):
-
     """
     Основной цикл программы
 
@@ -350,7 +346,6 @@ def run(variant_number: int, amount_wheels: int):
 
 
 if __name__ == '__main__':
-
     # Инициализация входных данных:
     input_data = read_yml_file(Path('../data/variants_data.yml'))
     log.info('Входные данные успешно инициализированы')
