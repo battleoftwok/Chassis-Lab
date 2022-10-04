@@ -159,11 +159,9 @@ def pneumatics_selection(pneumatics: dict, var_data: dict, amount_wheels: int):
 def lines(axis, coords_x, coords_y, options: dict):
 
     axis.vlines(coords_x[0], 0, coords_y[0], **options)
-
     axis.hlines(coords_y[0], 0, coords_x[0], **options)
 
     axis.vlines(coords_x[1], 0, coords_y[1], **options)
-
     axis.hlines(coords_y[1], 0, coords_x[1], **options)
 
 
@@ -265,13 +263,17 @@ def plot(pneumatic_data: dict, value_p0: float):
 
     # -------------------------------------------------------------------------------------------------------
 
-    options = {
-        "color": 'b',
-        "linewidth": 2,
-        "linestyle": (0, (5, 10))
-    }
+    lines(axis, pressure_vals, work_vals, {"color": 'b',
+                                           "linewidth": 1,
+                                           "linestyle": (0, (5, 10))})
 
-    lines(axis, pressure_vals, work_vals, options)
+    lines(crimping, pressure_vals, crimping_vals, {"color": 'r',
+                                                   "linewidth": 1,
+                                                   "linestyle": (0, (5, 10))})
+
+    lines(force, pressure_vals, force_vals, {"color": 'g',
+                                             "linewidth": 1,
+                                             "linestyle": (0, (5, 10))})
 
     output_data({
             'Aм.д. [даН * мм]': straight_line_equation(value_p0, pressure_vals, work_vals),
