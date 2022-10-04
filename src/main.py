@@ -7,20 +7,45 @@ ENCODING = 'utf-8'
 UNIT = 10
 
 
-def cm_to_inch(value):
-    return value/2.54
+def straight_line_equation(value_x: float, coords_x: tuple, coords_y: tuple) -> float:
+    """
+    
+    Нахождение ординаты прямой по абсциссе. Прямая заданна двумя точками.
+    
+    Args:
+        value_x: значение абсциссы
+        coords_x: абсциссы двух точек
+        coords_y: ординаты двух точек
 
+    Returns: значение ординаты
 
-def get_parameter(value: float, coords_x: tuple, coords_y: tuple) -> float:
-    return (coords_y[1] - coords_y[0]) * ((value - coords_x[0]) / (coords_x[1] - coords_x[0])) + coords_y[0]
+    """
+    return (coords_y[1] - coords_y[0]) * ((value_x - coords_x[0]) / (coords_x[1] - coords_x[0])) + coords_y[0]
 
 
 def read_yml_file(path: Path):
+    """
+    Считать данные из YAML файла
+
+    Args:
+        path: путь до файла
+
+    Returns: содержимое файла
+    """
     with open(path, "r", encoding=ENCODING) as file_data:
         return yaml.load(file_data, Loader=yaml.FullLoader)
 
 
 def confirm_prompt(question: str) -> bool:
+    """
+    Подтверждение действия
+
+    Args:
+        question: вопрос
+
+    Returns: подтверждение
+    """
+
     answer = None
     while answer not in ("", "y", "ye", "yes", "n", "no"):
         answer = input(f"{question} [Y/n]: ").lower()
@@ -28,10 +53,28 @@ def confirm_prompt(question: str) -> bool:
 
 
 def str_into_tuple(string: str) -> tuple:
+    """
+    Прообразовать строку формы 'a,a', где a-число, в кортеж
+
+    Args:
+        string: строка формы 'a,a'
+
+    Returns: кортеж
+    """
     return tuple(map(float, string.split(',')))
 
 
 def upload_new_var_data(new_data: dict, variants_data: dict) -> None:
+    """
+    Загрузить данные нового варианта в YAML файл
+
+    Args:
+        new_data: новые данные
+        variants_data: данные считанные из файла
+
+    Returns: None
+
+    """
     variants_data['variants'].append(new_data)
 
     with open('../data/variants_data.yml', "w", encoding=ENCODING) as file:
@@ -41,6 +84,16 @@ def upload_new_var_data(new_data: dict, variants_data: dict) -> None:
 
 
 def get_unique_variant(var_num: int, variants_data: dict) -> dict:
+    """
+    Получить уникальный вариант
+
+    Args:
+        var_num: номер варианта
+        variants_data: данные, считанные из файла YAML
+
+    Returns: данные варианты
+
+    """
     for item in variants_data['variants']:
         if item.get('Номер варианта') == var_num:
             return item
@@ -49,6 +102,19 @@ def get_unique_variant(var_num: int, variants_data: dict) -> dict:
 
 
 def add_new_variant(var_num: int, variants_data: dict):
+
+    """
+
+    Добавить новые данные
+
+    Args:
+        var_num: номер варианта
+        variants_data: данные всех вариантов
+
+    Returns: None
+
+    """
+
     answer = confirm_prompt('\nВы хотите добавить данные для этого варианта?')
 
     if answer:
@@ -66,6 +132,20 @@ def add_new_variant(var_num: int, variants_data: dict):
 
 
 def pneumatics_selection(pneumatics: dict, var_data: dict, amount_wheels: int):
+
+    """
+
+    Подбор пневматика
+
+    Args:
+        pneumatics: данные всех пневматиков
+        var_data: данные варианта
+        amount_wheels: кол-во колёс стойки шасси
+
+    Returns: данные подобранного пневматика
+
+    """
+
     for item in pneumatics["pneumatics"]:
         if ((var_data['Pст.пос, [Н]'] / (UNIT * amount_wheels) < item["Pст.пос, [кгс]"]) &
             (var_data['Pст.взл, [Н]'] / (UNIT * amount_wheels) < item["Pст.взл, [кгс]"]) &
@@ -76,7 +156,20 @@ def pneumatics_selection(pneumatics: dict, var_data: dict, amount_wheels: int):
             return item
 
 
-def plot(data: dict, value: float):
+def plot(pneumatic_data: dict, value_p0: float):
+
+    """
+
+    Построение графика
+
+    Args:
+        pneumatic_data: данные подобранного пневматика
+        value_p0: значение p0
+
+    Returns: None
+
+    """
+
     font = {'family': 'serif',
             'color': 'black',
             'weight': 'normal',
@@ -94,10 +187,10 @@ def plot(data: dict, value: float):
     force.spines.right.set_position(("axes", 1.2))
 
     log.warning("Введённые данные возможно некорректные")
-    pressure_vals = str_into_tuple(data["p0, [кгс/см^2]"])
-    work_vals = str_into_tuple(data["Aм.д, [кг*м]"])
-    crimping_vals = str_into_tuple(data["delta_м.д, [мм]"])
-    force_vals = str_into_tuple(data["Pм.д, [кгс]"])
+    pressure_vals = str_into_tuple(pneumatic_data["p0, [кгс/см^2]"])
+    work_vals = str_into_tuple(pneumatic_data["Aм.д, [кг*м]"])
+    crimping_vals = str_into_tuple(pneumatic_data["delta_м.д, [мм]"])
+    force_vals = str_into_tuple(pneumatic_data["Pм.д, [кгс]"])
 
     p1, = axis.plot(pressure_vals, work_vals, "b-", label="Максимально допустимая работа", linewidth=2)
     p2, = crimping.plot(pressure_vals, crimping_vals, "r-", label="Максимально допустимое обжатие", linewidth=2)
@@ -128,40 +221,40 @@ def plot(data: dict, value: float):
     for ax in ['top', 'bottom', 'left', 'right']:
         axis.spines[ax].set_linewidth(1.5)
 
-    force.vlines(value, 0, get_parameter(value, pressure_vals, force_vals),
+    force.vlines(value_p0, 0, straight_line_equation(value_p0, pressure_vals, force_vals),
                  color='g',
                  linewidth=2,
                  linestyle=':')
 
-    force.hlines(get_parameter(value, pressure_vals, force_vals), value, force_vals[1],
+    force.hlines(straight_line_equation(value_p0, pressure_vals, force_vals), value_p0, force_vals[1],
                  color='g',
                  linewidth=2,
                  linestyle=':')
 
-    crimping.vlines(value, 0, get_parameter(value, pressure_vals, crimping_vals),
+    crimping.vlines(value_p0, 0, straight_line_equation(value_p0, pressure_vals, crimping_vals),
                     color='r',
                     linewidth=2,
                     linestyle=':')
 
-    crimping.hlines(get_parameter(value, pressure_vals, crimping_vals), value, crimping_vals[1],
+    crimping.hlines(straight_line_equation(value_p0, pressure_vals, crimping_vals), value_p0, crimping_vals[1],
                     color='r',
                     linewidth=2,
                     linestyle=':')
 
-    axis.vlines(value, 0, get_parameter(value, pressure_vals, work_vals),
+    axis.vlines(value_p0, 0, straight_line_equation(value_p0, pressure_vals, work_vals),
                 color='b',
                 linewidth=2,
                 linestyle=':')
 
-    axis.hlines(get_parameter(value, pressure_vals, work_vals), 0, value,
+    axis.hlines(straight_line_equation(value_p0, pressure_vals, work_vals), 0, value_p0,
                 color='b',
                 linewidth=2,
                 linestyle=':')
 
-    info_string = r"$A_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, work_vals), 2)} $[даН * мм]$\n" + \
-                  r"$\delta_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, crimping_vals), 2)} $[мм]$\n" + \
-                  r"$P_{м.д.}$ = " + f"{round(get_parameter(value, pressure_vals, force_vals), 2)} $[даН]$\n" + \
-                  r"$p_0$ = " + f"{round(value, 2)} $[кгс/см^2]$\n"
+    info_string = r"$A_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, work_vals), 2)} $[даН * мм]$\n" + \
+                  r"$\delta_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, crimping_vals), 2)} $[мм]$\n" + \
+                  r"$P_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, force_vals), 2)} $[даН]$\n" + \
+                  r"$p_0$ = " + f"{round(value_p0, 2)} $[кгс/см^2]$\n"
 
     figure.text(0.45, 0.15, info_string, size=12, weight='bold')
 
@@ -176,18 +269,49 @@ def plot(data: dict, value: float):
 
 
 def run(variant_number: int, amount_wheels: int):
+
+    """
+    Основной цикл программы
+
+    Args:
+        variant_number: номер варианта
+        amount_wheels: кол-во колёс стойки
+
+    """
+
     var_data = get_unique_variant(variant_number, input_data)
+    pneumatic = pneumatics_selection(pneumatics_data, var_data, amount_wheels)
 
     log.info(var_data)
 
     if var_data is None:
         add_new_variant(variant_number, input_data)
         new_var_data = get_unique_variant(variant_number, input_data)
-        plot(pneumatics_selection(pneumatics_data, new_var_data, amount_wheels), new_var_data["p0 * 10^5, [Па]"])
-    else:
-        log.info(pneumatics_selection(pneumatics_data, var_data, amount_wheels))
 
-        plot(pneumatics_selection(pneumatics_data, var_data, amount_wheels), var_data["p0 * 10^5, [Па]"])
+        print()
+        for key, value in new_var_data.items():
+            print(key, ':', value)
+
+        print("\nПодобран пневматик:")
+
+        for key, value in pneumatic.items():
+            print(key, ':', value)
+
+        plot(pneumatic, new_var_data["p0 * 10^5, [Па]"])
+    else:
+
+        log.info(pneumatic)
+
+        print()
+        for key, value in var_data.items():
+            print(key, ':', value)
+
+        print("\nПодобран пневматик:")
+
+        for key, value in pneumatic.items():
+            print(key, ':', value)
+
+        plot(pneumatic, var_data["p0 * 10^5, [Па]"])
 
 
 if __name__ == '__main__':
