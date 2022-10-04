@@ -251,6 +251,11 @@ def plot(pneumatic_data: dict, value_p0: float):
                 linewidth=2,
                 linestyle=':')
 
+    output_data({
+            'Aм.д. [даН * мм]': straight_line_equation(value_p0, pressure_vals, work_vals),
+            'Delta_м.д. [мм]': straight_line_equation(value_p0, pressure_vals, crimping_vals),
+            'Pм.д. [даН]': straight_line_equation(value_p0, pressure_vals, force_vals)})
+
     info_string = r"$A_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, work_vals), 2)} $[даН * мм]$\n" + \
                   r"$\delta_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, crimping_vals), 2)} $[мм]$\n" + \
                   r"$P_{м.д.}$ = " + f"{round(straight_line_equation(value_p0, pressure_vals, force_vals), 2)} $[даН]$\n" + \
@@ -266,6 +271,11 @@ def plot(pneumatic_data: dict, value_p0: float):
 
     plt.show()
     log.info('График успешно построен')
+
+
+def output_data(data):
+    with open('result.yml', "w", encoding=ENCODING) as file:
+        yaml.dump(data, file, allow_unicode=True, sort_keys=False)
 
 
 def run(variant_number: int, amount_wheels: int):
