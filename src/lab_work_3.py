@@ -1,10 +1,10 @@
-from enum import StrEnum
+from enum import Enum
 
 
 # Лабораторная работа №3 по шасси (Майсак М.В.)
 
 
-class ChassisType(StrEnum):
+class ChassisType(Enum):
     main = "основная"
     nose = "носовая"
 
@@ -21,7 +21,6 @@ input_data = {
     "Кол-во колёс": 4,
     "Вид стойки": "основная"  # или "носовая"
 }
-
 
 # =====================================================
 
@@ -54,8 +53,8 @@ def takeoff(takeoff_load: float) -> tuple:
     return takeoff_load * n_y_takeof * f, .3 * takeoff_load * n_y_takeof * f
 
 
-def load_distributio(chassis_type: str, vert_strike_load: float) -> tuple:
-    match chassis_type:
+def load_distribution(chassis_type: str, vert_strike_load: float) -> tuple:
+    match ChassisType(chassis_type):
         case ChassisType.main:
             return .75 * vert_strike_load, .4 * vert_strike_load
         case ChassisType.nose:
@@ -71,7 +70,7 @@ def side_impact(vert_strike_load: float, wheels_amount: int, chassis_type: str):
         wheels_amount (int): [description] (default: `4`)
         chassis_type (str): [description] (default: `"основная"`)
     """
-    loads = load_distributio(chassis_type, vert_strike_load)
+    loads = load_distribution(chassis_type, vert_strike_load)
 
     if wheels_amount == 1:
         return loads
