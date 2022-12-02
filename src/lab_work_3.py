@@ -1,4 +1,12 @@
+from enum import StrEnum
+
+
 # Лабораторная работа №3 по шасси (Майсак М.В.)
+
+
+class ChassisType(StrEnum):
+    main = "основная"
+    nose = "носовая"
 
 
 # =====================================================
@@ -13,6 +21,7 @@ input_data = {
     "Кол-во колёс": 4,
     "Вид стойки": "основная"  # или "носовая"
 }
+
 
 # =====================================================
 
@@ -45,6 +54,14 @@ def takeoff(takeoff_load: float) -> tuple:
     return takeoff_load * n_y_takeof * f, .3 * takeoff_load * n_y_takeof * f
 
 
+def load_distributio(chassis_type: str, vert_strike_load: float) -> tuple:
+    match chassis_type:
+        case ChassisType.main:
+            return .75 * vert_strike_load, .4 * vert_strike_load
+        case ChassisType.nose:
+            return vert_strike_load, .25 * vert_strike_load
+
+
 def side_impact(vert_strike_load: float, wheels_amount: int, chassis_type: str):
     """
     Посадка с боковым ударом
@@ -54,19 +71,10 @@ def side_impact(vert_strike_load: float, wheels_amount: int, chassis_type: str):
         wheels_amount (int): [description] (default: `4`)
         chassis_type (str): [description] (default: `"основная"`)
     """
-
-    if chassis_type == 'основная':
-        loads = (.75 * vert_strike_load, .4 * vert_strike_load)
-
-    elif chassis_type == 'носовая':
-        loads = (vert_strike_load, .25 * vert_strike_load)
-
-    else:
-        raise TypeError("Тип стойки может быть только 'носовая' или 'основная'")
+    loads = load_distributio(chassis_type, vert_strike_load)
 
     if wheels_amount == 1:
         return loads
-
     elif wheels_amount > 1 and wheels_amount % 2 == 0:
         return {"вся стойка": loads,
                 "левое": (loads[0] * (.4 / (wheels_amount / 2)),
